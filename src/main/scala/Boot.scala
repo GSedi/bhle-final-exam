@@ -10,6 +10,7 @@ import akka.stream.javadsl.StreamConverters
 import akka.util.Timeout
 import response.Response
 import service.PhotoService
+//import org.slf4j.LoggerFactory
 
 import scala.concurrent.duration._
 //import java.time.Duration
@@ -24,6 +25,7 @@ import scala.io.StdIn
 
 
 object Boot extends App with JsonSupport {
+//  val log = LoggerFactory.getLogger("Boot")
   implicit val system: ActorSystem             = ActorSystem("final-exam-system")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
@@ -33,14 +35,25 @@ object Boot extends App with JsonSupport {
   // needed fot akka's ASK pattern
   implicit val timeout: Timeout = Timeout(60.seconds)
 
-  val bucketName = "final-user-bucket-1234"
+  val bucketName = "bhle-final-exam-bucket"
 
   // amazon credentials
-  val awsCreds = new BasicAWSCredentials("your_access_key", "your_secret_key")
+  val awsCreds = new BasicAWSCredentials(
+    "AKIATPFNSO5RFE2HHU5J",
+    "HbNgtUUO/0WnXgcYjNcE238UhRlc6oH3Gp1HwTtt"
+  )
 
-  val s3Client: AmazonS3 = ???
+  val s3Client: AmazonS3 = AmazonS3ClientBuilder.standard
+    .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+    .withRegion(Regions.EU_CENTRAL_1)
+    .build
 
-  val photoService: ActorRef = ???
+  if (!s3Client.doesBucketExistV2(bucketName)) {
+//    log.info("Bucket does not exist, creating it...")
+    s3Client.createBucket(bucketName)
+  }
+
+  val photoService: ActorRef = system.actorOf(PhotoService.props(s3Client, bucketName), "photo-service")
 
   val route: Route = {
     pathPrefix("photo" / Segment) { userId =>
@@ -62,11 +75,22 @@ object Boot extends App with JsonSupport {
           }
         },
         path(Segment) { fileName =>
-          // TODO: implement GET method
-          // example: GET localhost:8081/photo/user-12/2.png
-
-          // TODO: implement DELETE method
-          // example: DELETE localhost:8081/photo/user-12/6.png
+          concat(
+            get {
+              // TODO: implement GET method
+              // example: GET localhost:8081/photo/user-12/2.png
+              complete {
+                (photoService ? PhotoService.GetPhoto(userId, fileName)).mapTo[Either[Response.Error, Response.PhotoUrl]]
+              }
+            },
+            delete {
+              // TODO: implement DELETE method
+              // example: DELETE localhost:8081/photo/user-12/6.png
+              complete {
+                (photoService ? PhotoService.DeletePhoto(userId, fileName)).mapTo[Either[Response.Error, Response.Accepted]]
+              }
+            }
+          )
         }
       )
     }
