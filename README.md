@@ -7,7 +7,7 @@ When a photo is requested the URL of photo is provided by `photo-service`. User 
 * Photos must be stored in S3 bucket
 * Photos must **not** be saved/stored locally
 * `photo-service` must provide pre-signed URLs of photos (described below)
-* `photo-service` must serve REST GET, POST, DELETE requests (no PUT)
+* `photo-service` must serve RESTful GET, POST, DELETE requests (no PUT)
 * `photo-service` must pass all POSTMAN tests 
 
 ## Bucket structure
@@ -47,3 +47,21 @@ You should import it to your Postman tool
 ![import collection](img/upload-3.png)
 
 You can provide your own photos for testing. You can also use prepared photos in `photos` directory.
+
+### Grading policy
+
+Task: Design and implement a REST API for a backend system that is used for uploading, retrieving, removing and updating user photos. The API should pass all the tests provided for Postman tool. The following technologies and tools must be used in the system: 
+* Scala programming language (*2 pts.*)
+* Akka toolkit and actor model (*2 pts.*)
+* Akka HTTP for serving requests (*2 pts.*)
+* Amazon Web Services S3 for storing user photos (*4 pts.*)
+* Postman tool for testing REST endpoints (*1 pt.*)
+* A bucket with name that contains string “user-data” must be created in AWS S3 when the application starts. If the bucket already exists application must continue running (*5 pts.*)
+* An HTTP **GET** endpoint that returns user photo by retrieving it from AWS S3. If the photo does not exist, an appropriate error message must be returned (*8 pts.*)
+* An HTTP **POST** endpoint that saves user photo to AWS S3. If such a photo for such user already exists, an appropriate error message must be returned (*8 pts.*)
+* An HTTP **DELETE** endpoint that deletes user photo from AWS S3. If a photo does not exist for such user, an appropriate error message must be returned (*8 pts.*)
+
+The application will be tested using tests prepared for Postman tool. The task is considered passed if it passes the tests and code works as described above.
+
+
+Good luck!
