@@ -12,7 +12,7 @@ import response.Response
 import service.PhotoService
 
 import scala.concurrent.duration._
-import java.time.Duration
+//import java.time.Duration
 
 import com.amazonaws.auth.{AWSStaticCredentialsProvider, BasicAWSCredentials}
 import com.amazonaws.regions.Regions
@@ -47,7 +47,7 @@ object Boot extends App with JsonSupport {
       concat(
         post {
 
-          // ex: POST localhost:8081/photo/user-12
+          // example: POST localhost:8081/photo/user-12
           fileUpload("photoUpload") {
             case (fileInfo, fileStream) =>
 
@@ -55,7 +55,7 @@ object Boot extends App with JsonSupport {
               // fileInfo -- information about file, including FILENAME
               // filestream -- stream data of file
 
-              val inputStream = fileStream.runWith(StreamConverters.asInputStream(Duration.ofSeconds(5)))
+              val inputStream = fileStream.runWith(StreamConverters.asInputStream(5.seconds))
               complete {
                 (photoService ? PhotoService.UploadPhoto(inputStream, userId, fileInfo.fileName)).mapTo[Either[Response.Error, Response.Accepted]]
               }
@@ -63,10 +63,10 @@ object Boot extends App with JsonSupport {
         },
         path(Segment) { fileName =>
           // TODO: implement GET method
-          // ex: GET localhost:8081/photo/user-12/2.png
+          // example: GET localhost:8081/photo/user-12/2.png
 
           // TODO: implement DELETE method
-          // ex: DELETE localhost:8081/photo/user-12/6.png
+          // example: DELETE localhost:8081/photo/user-12/6.png
         }
       )
     }

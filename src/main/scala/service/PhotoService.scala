@@ -48,7 +48,7 @@ class PhotoService(s3Client: AmazonS3, bucketName: String) extends Actor with Ac
     case UploadPhoto(inputStream, userId, fileName) =>
       // TODO: implement this functionality
       // photo object's fullPath inside bucket must be `userId/photoFileName`
-      // ex: userId = user-2, fileName = photo.jpg => object path inside bucket must be `user-2/photo.jpg`
+      // example: userId = user-2, fileName = photo.jpg => object key inside bucket must be `user-2/photo.jpg`
 
 
       // TODO: check that file exists or not

@@ -4,12 +4,12 @@ version := "0.1"
 
 scalaVersion := "2.12.7"
 
-lazy val akkaVersion = "2.5.18"
-lazy val akkaHttpVersion = "10.1.5"
+lazy val akkaVersion = "2.5.21"
+lazy val akkaHttpVersion = "10.1.7"
 
 libraryDependencies ++= Seq(
   // aws s3 SDK
-  "com.amazonaws" % "aws-java-sdk-s3" % "1.11.452",
+  "com.amazonaws" % "aws-java-sdk-s3" % "1.11.531",
   // akka actors
   "com.typesafe.akka" %% "akka-actor"   % akkaVersion,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
